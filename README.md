@@ -4,9 +4,9 @@ For this final project, I examine the charting of sunspot numbers comparing the 
 
 
 ## Deliverables
-Website: https://atlas.terrazoom.com/infoViz/final<br />
-Video: <br />
-Writeup (PDF) - https://atlas.terrazoom.com/infoViz/final/JohnWilliams-FinalProject-INFO5602.pdf<br />
+Website: https://atlas.terrazoom.com/infoVis/final/v2/<br />
+Video: <br />In Google Drive
+Writeup (PDF) - In this repo and/or https://atlas.terrazoom.com/infoVis/final/v2/JohnWilliams-FinalProject-INFO5602.pdf<br />
 GitHub: https://github.com/INFO-4602-5602/final-project-TerraZoom <br />
 
 
