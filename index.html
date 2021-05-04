@@ -1,0 +1,334 @@
+<html>
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<!-- intentionally using v4 -->
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+
+<!-- Function for radial charts -->
+<!-- pulling this library because I like the look of this chart -->
+<script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3-scale-radial.js"></script>
+
+<!-- CSS -->
+<link href="_css/final.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+<!-- Create a div where the graph will take place -->
+<div id="content">
+  <div id="header"><h1>NSO Sunspot Number Explorer</h1></div>
+  <div id="slider"></div>
+  <div id="sunspot_dataviz"></div>
+</div>
+
+<script>
+
+var dataset;
+var formatDateIntoYear = d3.timeFormat("%Y");
+var formatDate = d3.timeFormat("%b %Y");
+var parseDate = d3.timeFormat("%m/%d/%Y");
+
+let numDays = 0;
+let ssnDate;
+var startDate = new Date("1945-01-01"),
+    endDate = new Date("2017-12-31");
+
+
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 10, bottom: 20, left: 10},
+    width = window.innerWidth - margin.left - margin.right,
+    height = 600 + margin.top + margin.bottom, // this will affect the overall size of the visualization
+    innerRadius = 100,
+    outerRadius = Math.min(width, height);   // the outerRadius goes from the middle of the SVG area to the border
+    barHeight = height / 2 - 40;
+
+// append the svg object to the body of the page
+var svg = d3.select("#sunspot_dataviz")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom + 300 ) //height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + ( height/2 + 200 )+ ")"); // 100 subtracted from height just to get it into position
+
+
+////////// slider //////////
+var svgSlider = d3.select("#slider")
+    .append("svg")
+    .attr("width", 600) // width - margin.left - margin.right)
+    .attr("height", 300 ) // height);
+    .attr("transform", "translate(" + width / 3 + "," + (-50)+ ")");
+
+var x = d3.scaleTime()
+    .domain([startDate, endDate])
+    .range([0, 500]) // width])
+    .clamp(true);
+
+var slider = svgSlider.append("g")
+    .attr("class", "slider")
+    .attr("transform", "translate(" + margin.left + "," + height / 10 + ")")
+    .attr("step", "365")
+
+slider.append("line")
+    .attr("class", "track")
+    .attr("x1", x.range()[0])
+    .attr("x2", x.range()[1])
+  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .attr("class", "track-inset")
+  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .attr("class", "track-overlay")
+    .call(d3.drag()
+        .on("start.interrupt", function() { slider.interrupt(); })
+        .on("start drag", function() { update(x.invert(d3.event.x)); }));
+
+slider.insert("g", ".track-overlay")
+    .attr("class", "ticks")
+    .attr("transform", "translate(0," + 18 + ")")
+  .selectAll("text")
+    .data(x.ticks(10))
+    .enter()
+    .append("text")
+    .attr("x", x)
+    .attr("y", 10)
+    .attr("text-anchor", "middle")
+    .text(function(d) { return formatDateIntoYear(d); });
+
+var handle = slider.insert("circle", ".track-overlay")
+    .attr("class", "handle")
+    .attr("r", 9);
+
+var label = slider.append("text")
+    .attr("class", "label")
+    .attr("text-anchor", "middle")
+    .text(formatDateIntoYear(startDate))
+    .attr("transform", "translate(0," + (-25) + ")")
+
+  d3.csv("_data/sunspots/list_aavso-arssn_daily_edit.csv", prepare, function(data) {
+    dataset = data;
+    drawPlot(dataset);
+  })
+
+
+  function prepare(d) {
+    // d.id = d.id;
+    // d.date = parseDate(d.date);
+    d.month = +d.Month;
+    d.day = +d.Day;
+    d.ssn = +d.SSN;
+    // d.numDays = numDays++;
+    d.year = +d.Year;
+  //  if (d.Year == 1945) {  // set year as variable changeable by slider?? // && d.Month == 12) {
+      d.ssnDate = (d.year + "-" + d.month + "-" + d.day);
+      d.dday = +d.year + "." + d.month + "." + d.day;
+      // console.log("day: " + d.ssnDate + " |" + d.SSN + " | " + numDays);
+    return d;
+   // }
+}
+
+
+function drawPlot(data) {
+// console.log(data);
+var keys = data.map(function(d,i) { return d.ssnDate; });
+var numBars = keys.length;
+
+  // enter phase
+  // update phase
+  // exit phase
+
+  // append the svg object to the body of the page
+  d3.select("#sunspot_dataviz")
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + width / 2 + "," + ( height/2 - 100 )+ ")"); // 100 subtracted from height just to get it into position
+
+  // console.log(data)
+  // X scale
+  var x = d3.scaleBand()
+      .range([0, 2 * Math.PI])    // X axis goes from 0 to 2pi = all around the circle. If I stop at 1Pi, it will be around a half circle
+      .align(0)
+      .domain( data.map(function(d) {
+      console.log("Year: " + d.Year)
+      return d.ssnDate; }) ); // The domain of the X axis is the list of states.
+
+  // Y scale
+  var y = d3.scaleRadial()
+      .range([innerRadius, outerRadius])   // Domain will be define later.
+      .domain([0, outerRadius]) //([0, 1000]) // Domain of Y is from 0 to the max seen in the data
+
+  // tooltips
+  // Define the div for the tooltip
+  var div = svg.append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+
+  // Add bars
+
+  console.log("remove burst");
+  svg.selectAll('g').remove();
+
+  svg.append("g")
+    .selectAll("path")
+    .data(data)
+    .enter()
+    .append("path")
+      .attr("fill", "#FAE03C")
+      .attr("d", d3.arc()     // imagine your doing a part of a donut plot
+          .innerRadius(innerRadius)
+
+          // ***************************************
+          // it's this outer radius value that we want to adjust when selecting new year
+          .outerRadius(function(d) { d.ssn = d.SSN; return y(d.SSN); })
+          // ***************************************
+
+          .startAngle(function(d) {
+                        d.numDays = 1 + numDays++; // 0 based
+                        d.ssnDate = (d.year + "-" + d.month + "-" + d.day);
+                        d.dday = +d.year + "." + d.month + "." + d.day;
+                      return x(d.ssnDate); })
+          .endAngle(function(d) {
+                        d.ssnDate = (d.Year + "-" + d.Month + "-" + d.Day);
+                        d.dday = +d.year + "." + d.month + "." + d.day;
+                      return x(d.ssnDate) + x.bandwidth(); })
+          .padAngle(0.03)
+          .padRadius(innerRadius))
+          .on('mouseover', function(d) {
+            console.log("mouseover", d.ssnDate, d.SSN)
+            var tooltipX = parseFloat(d3.select(this).attr('cx')) - 10;
+            var tooltipY = parseFloat(d3.select(this).attr('cy')) - 5;
+            d3.select(this).style('fill','red')
+                            // .transition()
+                            // .duration(1000)
+                            // .style("opacity", .3);
+           div.html(d.ssnDate + "<br />" + d.SSN)
+              .style("left", (d3.event.pageX) + "px")
+              .style("top", (d3.event.pageY - 28) + "px");
+          })
+          .on('mouseout', function() {
+            console.log("mouseout")
+            d3.select(this).style('fill',"#FAE03C")
+                           // .transition()
+                           // .duration(1000)
+                           .style("opacity", 100);
+          });
+
+
+          var ticks = 4;
+          var interval = (outerRadius - innerRadius) / ticks;
+
+          for(i=0; i<ticks; i++) {
+            if (i === 0) {
+              svg.append("circle")
+                  .attr("r", innerRadius + interval*i )
+                  .classed("outer", true)
+                  // .data(x.ticks(5))
+                  .style("fill", "none")
+                  .style("stroke", "#c1c1c1")
+                  .style("stroke-width",".5px");
+            } else {
+              svg.append("circle")
+                  .attr("r", innerRadius + interval*i+10 )
+                  .classed("outer", true)
+                  // .data(x.ticks(5))
+                  .style("fill", "none")
+                  .style("stroke", "#3e5062")
+                  .style("stroke-dasharray", ("5,5"))
+                  .style("stroke-width",".5px");
+            }
+          }
+          var lines = svg.selectAll("line")
+              .data(keys)
+            .enter().append("line")
+              .attr("y2", outerRadius - 150)
+              .style("stroke", "#c1c1c1")
+              .style("stroke-width",".1px")
+              .attr("transform", function(d, i) { return "rotate(" + (i * 360 / 12) + ")"; });
+
+          // Month Labels
+          var month = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"]
+          var labelRadius = innerRadius * 1;
+
+          var numSunspots = ["100","200","300"]
+
+          var sunspotMarkers = svg.append("g")
+              .classed("sunspotMarkers", true);
+
+          sunspotMarkers.append("mark")
+                  .append("path")
+                  .attr("id","marker-path")
+                  .attr("d", "m0 " + -labelRadius + " a" + labelRadius );
+          sunspotMarkers.selectAll("marker")
+          .data(numSunspots)
+          .enter().append("marker")
+          .style("text-anchor", "middle")
+          .style("font-weight","bold")
+          .style("fill", function(d, i) {return "#3e5062";})
+          .append("textPath")
+          .attr("xlink:href", "#label-path")
+          .attr("startOffset", function(d, i) {return i * 100 / 12 + 50 / 12 + '%';})
+
+
+
+          // this bit of label code inspired by https://bl.ocks.org/bricedev/8aaef92e64007f882267
+          var labels = svg.append("g")
+              .classed("labels", true);
+
+          labels.append("def")
+                .append("path")
+                .attr("id","label-path")
+                .attr("d", "m0 " + -labelRadius + " a" + labelRadius + " " + labelRadius + " 0 1,1 -0.01 0");
+
+          labels.selectAll("text")
+          .data(month)
+          .enter().append("text")
+          .style("text-anchor", "middle")
+          .style("font-weight","bold")
+          .style("fill", function(d, i) {return "#3e5062";})
+          .append("textPath")
+          .attr("xlink:href", "#label-path")
+          .attr("startOffset", function(d, i) {return i * 100 / 12 + 50 / 12 + '%';})
+          .text(function(d) {return d.toUpperCase(); });
+      // exit phase
+
+};
+
+function update(h) {
+  // update position and text of label according to slider scale
+  handle.attr("cx", x(h));
+  console.log("slider date: " + h);
+  label
+    .attr("x", x(h))
+    .text(formatDateIntoYear(h));
+
+  // filter data set and redraw plot
+  var newData = dataset.filter(function(d) {
+    d.date = formatDateIntoYear(h);
+      return d.date == d.Year;
+  })
+
+  drawPlot(newData);
+}
+
+// gridlines in x axis function
+ function make_x_gridlines() {
+     return d3.axisBottom(x)
+         .ticks(10)
+ }
+
+
+// gridlines in y axis function
+function make_y_gridlines() {
+    return d3.axisLeft(y)
+        .ticks(10)
+}
+
+
+</script>
+
+</body>
+</html>

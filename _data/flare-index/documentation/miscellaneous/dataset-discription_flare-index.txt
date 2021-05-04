@@ -1,0 +1,70 @@
+
+ *****************************************************************************
+ *It is recommended that it would be appropriate courtesy to acknowledge     *
+ *in publications that the flare index data were calculated by the staff of  *
+ *Kandilli Observatory. The following statement is suggested:                *
+ *"Flare Index Data used in this study were calculated by T.Atac and A.Ozguc *
+ * from Bogazici University Kandilli Observatory, Istanbul, Turkey"          *
+ *         http://www.koeri.boun.edu.tr/astronomy/findex.html                *
+ *****************************************************************************
+
+                              FLARE INDEX
+
+Kleczek (1952) first introduced the quantity "Q = i x t" to quantify the
+daily flare activity over 24 hours per day. He assumed that this
+relationship gives roughly the total energy emitted by the flares. In
+this relation, "i" represents the intensity scale of importance and "t"
+the duration (in minutes) of the flare. Some reviews of flare activity
+using Kleczek's method are given for each day from 1936 to 2000 by
+Kleczek (1952), Knoska and Letfus (unpublished), Knoska and Petrasek
+(1984), Atac (1987) and Atac and Ozguc (1998).
+The daily flare index of the 21,22,23 Solar Cycles was determined by using the
+final grouped solar flares which are compiled by NGDC (National
+Geophysical Data Center). It is calculated for each flare using the
+formula:
+                        Q = (i x t)
+
+where "i" is the importance coefficient of the flare as shown in Table 1, 
+and "t" is the duration of the flare in minutes.
+
+                        Table 1
+            _________________________________
+            Importance   i   Importance   i
+            ---------------------------------
+            SF,SN,SB    0.5    2B        2.5
+            1F,1N       1.0    3N,3F,4F  3.0
+            1B          1.5    3B,4N     3.5
+            2F,2N       2.0    4B        4.0
+            ---------------------------------
+
+To obtain final daily values, the daily sums of the index for the northern 
+and southern hemispheres and for the total surface are divided by the total 
+time of observation of that day calculated from Solar-Geophysical Data, 
+Comprehensive Reports. 
+
+      1986-2000 flare index data are produced by:
+
+ Dr. Tamer Atac                          Dr. Atila Ozguc
+Bogazici University                    Bogazici University
+Kandilli Observatory and               Kandilli Observatory and
+Earthquake Research Institute          Earthquake Research Institute
+Cengelkoy-81220 Istanbul               Cengelkoy-81220 Istanbul
+Turkey                                 Turkey
+e-mail: atac@boun.edu.tr               e-mail: ozguc@boun.edu.tr
+fax: 90-216-3321711                    fax: 90-216-3321711
+phone: 90-216-3080514                  phone: 90-216-3080514
+
+                            References
+Atac, T.: 1987, Astrophys. Space Sci. 135, 201.
+Ozguc, A. and Atac, T.: 1989, Solar Phys., 123, 357-365
+Ozguc, A. and Atac, T.: 1994, Solar Phys., 150, 339-346, 1994 
+Ozguc, A. and Atac, T.: 1996, Solar Phys., 163, 183-191, 1996 
+Atac, T.,and Ozguc, A.: 1996, Solar Phys., 166, 201-208, 1996 
+Atac, T.,and Ozguc, A.: 1998, Solar Phys., 180, 397-407
+Kleczek, J.: 1952, Publ. Inst. Centr. Astron., No. 22, Prague.
+Knoska, S and Petrasek, J.: 1984, Contr. Astron. Obs. Skalnate Pleso 12,
+165.
+                         Acknowledgements
+ The authors would like to thank to H.E.Coffey and E.H. Erwin of
+WDC-A for Solar-Terrestrial Physics, NOAA E/GC2, Broadway 325, Boulder,
+CO, who made available the grouped flare lists.
