@@ -2,6 +2,14 @@
 
 For this final project, I examine the charting of sunspot numbers comparing the usual visualizations of line charts which because of the compressed nature of the x-axis don’t clearly show any cyclical activity except for the well-known 11-year solar cycle. Radial charts, conversely, are well suited to expose other cyclical data. By visualizing individual years, using sunspot number data from the National Solar Observatory between 1945-2017 (1), radial visualizations of sunspot numbers appear to show an underlying cycle.
 
+
+## Deliverables
+Website: https://atlas.terrazoom.com/infoViz/final<br />
+Video: <br />
+Writeup (PDF) - https://atlas.terrazoom.com/infoViz/final/JohnWilliams-FinalProject-INFO5602.pdf<br />
+GitHub: https://github.com/INFO-4602-5602/final-project-TerraZoom <br />
+
+
 ## Write-Up
 You should approach the write-up like a research paper. It should contain the following sections:
 
@@ -140,12 +148,6 @@ Below are all the sources and resources used to benefit this project. It's a big
 [50]	D3 Line Chart @Observable - https://observablehq.com/@d3/line-chart
 [51]	D3 JSON data tutorial - https://www.dashingd3js.com/d3-tutorial/d3-json-data
 
-
-## Deliverables
-Website: https://atlas.terrazoom.com/infoViz/final
-Video:
-Writeup (PDF) - https://atlas.terrazoom.com/infoViz/final/John Williams - Final Project - INFO 5602.pdf
-GitHub:
 
 ## Submission
 You've got everything
